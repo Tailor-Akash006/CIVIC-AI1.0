@@ -1,0 +1,219 @@
+{
+  "info": {
+    "name": "CIVICMIND REST API Collection",
+    "description": "Complete Postman collection for CIVICMIND AI-powered civic complaint management backend.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "1. Login (Authority / Dispatcher)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"authority@civicmind.demo\",\n  \"password\": \"CivicMind2026!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "2. Login (Citizen)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"citizen@civicmind.demo\",\n  \"password\": \"CivicMind2026!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "3. Register Citizen",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Doe\",\n  \"email\": \"jane.doe@example.org\",\n  \"password\": \"SecurePass123!\",\n  \"role\": \"CITIZEN\",\n  \"phone\": \"+1 (555) 789-0123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] }
+          }
+        },
+        {
+          "name": "4. Get Current User Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+            "url": { "raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth", "me"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Complaints",
+      "item": [
+        {
+          "name": "1. Submit New Complaint (with AI Triage)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Severe Caved-In Pothole Near Lincoln High Crosswalk\",\n  \"description\": \"Deep road depression and broken tarmac expanding right at the school pedestrian crosswalk. Two cyclists swerved into oncoming traffic to avoid it this morning.\",\n  \"category\": \"roads_potholes\",\n  \"latitude\": 37.7749,\n  \"longitude\": -122.4194,\n  \"address\": \"742 Elmwood Ave\",\n  \"ward\": \"Ward 4 - Metro Center\",\n  \"reporterName\": \"Elena Rostova\",\n  \"reporterEmail\": \"elena@example.org\",\n  \"isAnonymous\": false\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/complaints", "host": ["{{baseUrl}}"], "path": ["complaints"] }
+          }
+        },
+        {
+          "name": "2. Get Complaints (Paginated & Filtered)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/complaints?page=1&limit=20&priority=CRITICAL",
+              "host": ["{{baseUrl}}"],
+              "path": ["complaints"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" },
+                { "key": "priority", "value": "CRITICAL" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "3. Public Track by Tracking ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/complaints/tracking/CIV-2026-8941",
+              "host": ["{{baseUrl}}"],
+              "path": ["complaints", "tracking", "CIV-2026-8941"]
+            }
+          }
+        },
+        {
+          "name": "4. Get Complaint by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/complaints/CIV-2026-8941",
+              "host": ["{{baseUrl}}"],
+              "path": ["complaints", "CIV-2026-8941"]
+            }
+          }
+        },
+        {
+          "name": "5. Update Complaint Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"IN_PROGRESS\",\n  \"remarks\": \"Asphalt crew arrived with heavy roller and cold asphalt mix.\",\n  \"changedBy\": \"Supervisor Marcus Vance\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/complaints/:id/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["complaints", ":id", "status"]
+            }
+          }
+        },
+        {
+          "name": "6. Assign Complaint to Department / Officer",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"assignedDept\": \"Department of Public Works - Rapid Asphalt Unit\",\n  \"officerName\": \"Supervisor Marcus Vance\",\n  \"remarks\": \"Assigned to Ward 4 rapid dispatch team.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/complaints/:id/assign",
+              "host": ["{{baseUrl}}"],
+              "path": ["complaints", ":id", "assign"]
+            }
+          }
+        },
+        {
+          "name": "7. Get Complaint Audit History",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/complaints/:id/history",
+              "host": ["{{baseUrl}}"],
+              "path": ["complaints", ":id", "history"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard Analytics",
+      "item": [
+        {
+          "name": "1. Get Dashboard KPI Stats",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/dashboard/stats", "host": ["{{baseUrl}}"], "path": ["dashboard", "stats"] }
+          }
+        },
+        {
+          "name": "2. Get Priority Breakdown",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/dashboard/priority", "host": ["{{baseUrl}}"], "path": ["dashboard", "priority"] }
+          }
+        },
+        {
+          "name": "3. Get Category Breakdown",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/dashboard/categories", "host": ["{{baseUrl}}"], "path": ["dashboard", "categories"] }
+          }
+        },
+        {
+          "name": "4. Get Weekly Trends",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/trends?days=14",
+              "host": ["{{baseUrl}}"],
+              "path": ["dashboard", "trends"],
+              "query": [{ "key": "days", "value": "14" }]
+            }
+          }
+        },
+        {
+          "name": "5. Get Geographic Hotspots (GIS Clusters)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/dashboard/hotspots", "host": ["{{baseUrl}}"], "path": ["dashboard", "hotspots"] }
+          }
+        }
+      ]
+    }
+  ]
+}

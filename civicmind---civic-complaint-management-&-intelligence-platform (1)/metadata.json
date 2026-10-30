@@ -1,0 +1,6 @@
+{
+  "name": "CIVICMIND - Civic Complaint Management & Intelligence Platform",
+  "description": "Every complaint matters. Every action counts. AI-powered civic complaint management and intelligence platform for citizens and municipal authorities.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
